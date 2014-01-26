@@ -4,13 +4,14 @@ angular.module('mean.bookings').controller('BookingController', ['$scope', '$rou
     $scope.toggleCell = function(booking) {
         if (booking.cellSelected === 'undefined') {
             booking.cellSelected = true;
-        } else {
+        } else if (typeof booking.user === 'undefined') {
             booking.cellSelected = !booking.cellSelected;
         }
 
-        if (booking.cellSelected) {
+        if (booking.cellSelected && (typeof booking.user === 'undefined'
+            || booking.user._id === $scope.global.user._id)) {
             var modalInstance = $modal.open({
-                templateUrl: 'myModalContent.html',
+                templateUrl: 'createArticle.html',
                 controller: ModalInstanceCtrl,
                 resolve: {
                     items: function () {
@@ -34,6 +35,18 @@ angular.module('mean.bookings').controller('BookingController', ['$scope', '$rou
                                 $modalInstance.close(response);
                             });
                         } 
+                    },
+                    remove: function() {
+                        return function($modalInstance) {
+                            var oldBooking = new Bookings({
+                                _id: booking._id
+                            });
+                            oldBooking.$remove(function(response) {
+                                booking.cellSelected = false;
+                                delete booking.user;
+                                $modalInstance.close(response);
+                            });  
+                        }
                     }
                 }
             });
@@ -42,6 +55,16 @@ angular.module('mean.bookings').controller('BookingController', ['$scope', '$rou
                 //$scope.selected = selectedItem;
             }, function () {
                 $log.info('Modal dismissed at: ' + new Date());
+            });
+        } else if (booking.cellSelected) {
+            var modalInstance = $modal.open({
+                templateUrl: 'readArticle.html',
+                controller: ModalReadOnlyCtrl,
+                resolve: {
+                    selectedItem: function() {
+                        return booking;
+                    }
+                }
             });
         }
     };
@@ -107,12 +130,14 @@ angular.module('mean.bookings').controller('BookingController', ['$scope', '$rou
 
 }]);
 
-var ModalInstanceCtrl = function ($scope, $modalInstance, items, selectedItem, currentUser, save) {
+var ModalInstanceCtrl = function ($scope, $modalInstance, items, selectedItem, currentUser, save, remove) {
 
   $scope.items = items;
   $scope.selectedItem = selectedItem;
   $scope.user = currentUser;
   $scope.save = save;
+  $scope.remove = remove;
+  $scope.newBooking = typeof selectedItem.user === 'undefined';
 
   $scope.selected = {
     item: $scope.items[0]
@@ -129,8 +154,26 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, items, selectedItem, c
 
   };
 
+  $scope.removeBooking = function() {
+    $scope.remove($modalInstance);
+  };
+
   $scope.cancel = function () {
-    $scope.selectedItem.cellSelected = false; 
+    if ($scope.newBooking) {
+        $scope.selectedItem.cellSelected = false; 
+    }
     $modalInstance.dismiss('cancel');
   };
+};
+
+var ModalReadOnlyCtrl = function ($scope, $modalInstance, selectedItem) {
+
+  $scope.selectedItem = selectedItem;
+  $scope.bookedBy = selectedItem.user.name;
+  $scope.ok = function () {
+   
+    $modalInstance.dismiss('cancel');
+
+  };
+
 };

@@ -1,0 +1,30 @@
+<script type="text/ng-template" id="readArticle.html">
+    <div class="modal-header">
+           <h3>Bokningsinformation</h3>
+    </div>
+    <div class="modal-body">
+
+        <form class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="user">Lägenhetsinnehavare</label>
+
+                <div class="controls">
+                    <input type="text" id="user" data-ng-model="bookedBy" readonly>
+                    </input>
+                </div>
+            </div>
+                
+            <div class="control-group">
+                <label class="control-label" for="content">Kommentar</label>
+
+                <div class="controls">
+                    <textarea id="content" cols="30" rows="10" readonly> 
+                    </textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">OK</button>
+    </div>
+</script>

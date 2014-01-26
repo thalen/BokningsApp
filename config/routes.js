@@ -74,7 +74,10 @@ module.exports = function(app, passport, auth) {
     var bookings = require('../app/controllers/bookings');
     app.get('/bookings', bookings.all);
     app.post('/bookings', bookings.addBooking);
-       
+    app.del('/bookings/:bookingId', auth.requiresLogin, auth.booking.hasAuthorization, bookings.destroy);
+    
+    app.param('bookingId', bookings.booking);
+
     //Finish with setting up the articleId param
     app.param('articleId', articles.article);
 
