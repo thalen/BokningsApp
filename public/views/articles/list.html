@@ -1,0 +1,61 @@
+<section data-ng-controller="BookingController" data-ng-init="find()">
+    <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3>Boka rum</h3>
+        </div>
+        <div class="modal-body">
+
+            <form class="form-horizontal">
+                <div class="control-group">
+                    <label class="control-label" for="user">Lägenhetsinnehavare</label>
+
+                    <div class="controls">
+                        <input type="text" id="user" data-ng-model="user" readonly>
+                        </input>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label" for="content">Kommentar</label>
+
+                    <div class="controls">
+                        <textarea id="content" cols="30" rows="10" placeholder="Skriv valfri kommentar"> 
+                        </textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Avbryt</button>
+        </div>
+    </script>
+
+	<div class="row-fluid show-grid">
+  		<div class="span12">
+    		Januari
+    		<div class="row-fluid-7 show-grid" style="margin-bottom: 30px">
+    			
+    			<div class="span1">Söndag</div>
+    			<div class="span1">Måndag</div>
+    			<div class="span1">Tisdag</div>
+    			<div class="span1">Onsdag</div>
+    			<div class="span1">Torsdag</div>
+    			<div class="span1">Fredag</div>
+    			<div class="span1">Lördag</div>
+    			
+    		</div>
+    		
+            
+            <div data-ng-repeat="(key, value) in bookings" class="row-fluid-7 show-grid">
+
+                <div data-ng-repeat="booking in value" data-ng-class="{day: !booking.invalid, invalidday: booking.invalid, selected2: booking.cellSelected}" 
+                     class="span1" data-ng-click="toggleCell(booking)">
+                    {{booking.day}}
+                </div>
+                
+            </div>
+    
+  		</div>
+	</div>
+</section>
