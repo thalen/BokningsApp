@@ -78,6 +78,9 @@ module.exports = function(app, passport, auth) {
     
     app.param('bookingId', bookings.booking);
 
+    app.get('/bookingsByMonth/:month', bookings.bookingsByMonth);
+    app.param('month', bookings.month);
+
     //Finish with setting up the articleId param
     app.param('articleId', articles.article);
 

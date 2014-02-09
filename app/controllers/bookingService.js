@@ -9,9 +9,15 @@ var mongoose = require('mongoose'),
     _ = require('underscore');
 
 
-exports.getAllBookings = function(resultCb) {
-    var days = moment().daysInMonth();
+exports.getAllBookings = function(selectedMonth, resultCb) {
+    console.log("selectedMonth: " + selectedMonth);
     var tmpDate = moment();
+    if (selectedMonth !== null) {
+        tmpDate.set('month', parseInt(selectedMonth));
+        console.log("month set");    
+    }
+    var days = tmpDate.daysInMonth();
+    console.log("days in month: " + days);
     var result = [];
     Booking.find({year: tmpDate.year(), month: tmpDate.month()}).populate('user', 'name username').exec(function(err, bookings) {
         var daysList = _.range(1, days);
@@ -23,9 +29,10 @@ exports.getAllBookings = function(resultCb) {
         for (var i = 1; i<= parseInt(days); i++) {
             tmpDate.date(i);
             if (i == 1) {
+                console.log("tmpdate.day: " + tmpDate.day());
                 for (var j = 0; j < tmpDate.day(); j++) {
                     var days2Subtract = tmpDate.day() - j;
-                    var tmpDate2 = moment();
+                    var tmpDate2 = moment(tmpDate);
                     tmpDate2.date(i);
                     tmpDate2.subtract('days', days2Subtract);
                     result.push(new Booking({day: tmpDate2.date(), month: tmpDate2.month(), year: tmpDate2.year(), fullDate: tmpDate2, invalid: true}));
@@ -47,7 +54,7 @@ exports.getAllBookings = function(resultCb) {
     
         var transform = function(booking) {
             var momentDate = moment(booking.fullDate);
-            return momentDate.week();
+            return parseInt(momentDate.week());
         };
 
         resultCb(_.groupBy(result, transform), null); 

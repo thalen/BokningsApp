@@ -17,11 +17,22 @@ exports.booking = function(req, res, next, id) {
     });
 };
 
+exports.month = function(req, res, next, id) {
+    req.month = id;
+    next();
+}
+
 exports.all = function(req, res) {
-    bookingService.getAllBookings(function(result, err) {
+    bookingService.getAllBookings(null, function(result, err) {
         res.jsonp(result);
     });
 };
+
+exports.bookingsByMonth = function(req, res) {
+    bookingService.getAllBookings(req.month, function(result, err) {
+        res.jsonp(result);
+    });
+}
 
 exports.destroy = function(req, res) {
     var booking = req.booking;

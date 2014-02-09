@@ -1,4 +1,4 @@
-angular.module('mean.bookings').controller('BookingController', ['$scope', '$routeParams', '$location', '$log', '$modal', 'Global', 'Bookings', function ($scope, $routeParams, $location, $log, $modal, Global, Bookings) {
+angular.module('mean.bookings').controller('BookingController', ['$scope', '$routeParams', '$location', '$log', '$modal', 'Global', 'Bookings', 'BookingsByMonth', function ($scope, $routeParams, $location, $log, $modal, Global, Bookings, BookingsByMonth) {
     $scope.global = Global;
 
     $scope.toggleCell = function(booking) {
@@ -106,6 +106,23 @@ angular.module('mean.bookings').controller('BookingController', ['$scope', '$rou
 
     $scope.find = function() {
 
+        var d=new Date();
+        var month=new Array();
+        month[0]="Januari";
+        month[1]="Februari";
+        month[2]="Mars";
+        month[3]="April";
+        month[4]="Maj";
+        month[5]="Juni";
+        month[6]="Juli";
+        month[7]="Augusti";
+        month[8]="September";
+        month[9]="Oktober";
+        month[10]="November";
+        month[11]="December";
+        $scope.currentMonth = month[d.getMonth()];
+        $scope.currentMonthId = d.getMonth();
+
         Bookings.get(function(bookings) {
             for (var key in bookings) {
                 if (bookings.hasOwnProperty(key)) {
@@ -114,10 +131,71 @@ angular.module('mean.bookings').controller('BookingController', ['$scope', '$rou
                         values[i].cellSelected = typeof values[i].user !== 'undefined';
                     }
                 }
-            }
-            
-            $scope.bookings = bookings;
+            } 
+            $scope.bookings = bookings;           
         });
+    };
+
+    $scope.prevMonth = function() {
+        if ($scope.currentMonthId > 0) {
+        BookingsByMonth.get({month:$scope.currentMonthId-1}, function(bookings) {
+           for (var key in bookings) {
+                if (bookings.hasOwnProperty(key)) {
+                    var values = bookings[key];
+                    for (var i = 0; i < values.length; i++) {
+                        values[i].cellSelected = typeof values[i].user !== 'undefined';
+                    }
+                }
+            } 
+            $scope.bookings = bookings;
+            $scope.currentMonthId = $scope.currentMonthId-1;
+            var month=new Array();
+            month[0]="Januari";
+            month[1]="Februari";
+            month[2]="Mars";
+            month[3]="April";
+            month[4]="Maj";
+            month[5]="Juni";
+            month[6]="Juli";
+            month[7]="Augusti";
+            month[8]="September";
+            month[9]="Oktober";
+            month[10]="November";
+            month[11]="December";
+            $scope.currentMonth = month[$scope.currentMonthId];
+        });
+    }
+    };
+
+    $scope.nextMonth = function() {
+        if ($scope.currentMonthId < 11) {
+        BookingsByMonth.get({month:$scope.currentMonthId+1}, function(bookings) {
+           for (var key in bookings) {
+                if (bookings.hasOwnProperty(key)) {
+                    var values = bookings[key];
+                    for (var i = 0; i < values.length; i++) {
+                        values[i].cellSelected = typeof values[i].user !== 'undefined';
+                    }
+                }
+            } 
+            $scope.bookings = bookings;
+            $scope.currentMonthId = $scope.currentMonthId+1;
+            var month=new Array();
+            month[0]="Januari";
+            month[1]="Februari";
+            month[2]="Mars";
+            month[3]="April";
+            month[4]="Maj";
+            month[5]="Juni";
+            month[6]="Juli";
+            month[7]="Augusti";
+            month[8]="September";
+            month[9]="Oktober";
+            month[10]="November";
+            month[11]="December";
+            $scope.currentMonth = month[$scope.currentMonthId];
+        });
+    }
     };
 
     $scope.findOne = function() {
